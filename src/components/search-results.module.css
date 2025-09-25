@@ -32,6 +32,10 @@
   color: white;
 }
 
+.active .highlighted {
+  color: white;
+}
+
 .listItem:last-child {
   border-bottom: none;
 }
