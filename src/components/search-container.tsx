@@ -1,9 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import SearchInput from "@/components/search-input";
 import { useDebouncedCallback } from "@/hooks/use-debounced-callback";
+import { useSearch } from "@/hooks/use-search";
+import SearchInput from "@/components/search-input";
+import SearchResults from "@/components/search-results";
 
 export default function SearchContainer({
   initialQuery,
@@ -13,8 +15,12 @@ export default function SearchContainer({
   const pathname = usePathname();
   const { replace } = useRouter();
   const [inputValue, setInputValue] = useState(initialQuery);
+  const [debouncedQuery, setDebouncedQuery] = useState(initialQuery);
 
-  const updateUrl = useDebouncedCallback((query: string) => {
+  const { results, isLoading, error } = useSearch(debouncedQuery);
+
+  const updateUrlAndQuery = useDebouncedCallback((query: string) => {
+    setDebouncedQuery(query);
     const params = new URLSearchParams(window.location.search);
     if (query) {
       params.set("q", query);
@@ -24,14 +30,23 @@ export default function SearchContainer({
     replace(`${pathname}?${params.toString()}`);
   }, 500);
 
-  const handleInputChange = (value: string) => {
-    setInputValue(value);
-    updateUrl(value);
-  };
+  const handleInputChange = useCallback(
+    (value: string) => {
+      setInputValue(value);
+      updateUrlAndQuery(value);
+    },
+    [updateUrlAndQuery]
+  );
 
   useEffect(() => {
     setInputValue(initialQuery);
+    setDebouncedQuery(initialQuery);
   }, [initialQuery]);
 
-  return <SearchInput value={inputValue} onChange={handleInputChange} />;
+  return (
+    <>
+      <SearchInput value={inputValue} onChange={handleInputChange} />
+      <SearchResults results={results} isLoading={isLoading} error={error} />
+    </>
+  );
 }
