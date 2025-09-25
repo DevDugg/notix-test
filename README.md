@@ -14,6 +14,10 @@ This is a Next.js application built to fulfill a frontend test task. The primary
 - **Client-Side Caching:** Subsequent searches for the same term are served instantly from an in-memory cache.
 - **Polished UI/UX:** Features a clean design with fluid animations for all state transitions.
 
+## Live Demo
+
+![Live Demo of the Search Application](./public/preview.gif)
+
 ## Technical Architecture
 
 The application is architected to be highly modular, reusable, and maintainable, following modern React best practices.
@@ -63,11 +67,3 @@ The application is architected to be highly modular, reusable, and maintainable,
     ```
 
 The application will be available at `http://localhost:3000`.
-
-### Running Tests
-
-The project is configured to use Bun's built-in test runner.
-
-```bash
-bun test
-```
