@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useReducer } from "react";
+import { useEffect, useReducer, useRef } from "react";
 import { SearchResult } from "@/components/search-results";
 
 interface State {
@@ -46,10 +46,19 @@ function searchReducer(state: State, action: Action): State {
 
 export function useSearch(debouncedQuery: string) {
   const [state, dispatch] = useReducer(searchReducer, initialState);
+  const cache = useRef<Map<string, SearchResult[]>>(new Map());
 
   useEffect(() => {
     if (!debouncedQuery) {
       dispatch({ type: "RESET" });
+      return;
+    }
+
+    if (cache.current.has(debouncedQuery)) {
+      dispatch({
+        type: "FETCH_SUCCESS",
+        payload: cache.current.get(debouncedQuery)!,
+      });
       return;
     }
 
@@ -70,6 +79,7 @@ export function useSearch(debouncedQuery: string) {
         }
 
         const data = await response.json();
+        cache.current.set(debouncedQuery, data);
         dispatch({ type: "FETCH_SUCCESS", payload: data });
       } catch (error) {
         if (error instanceof Error && error.name !== "AbortError") {
