@@ -1,3 +1,4 @@
+import React from "react";
 import styles from "./search-results.module.css";
 
 export interface SearchResult {
@@ -9,12 +10,14 @@ interface SearchResultsProps {
   results: SearchResult[];
   isLoading: boolean;
   error: string | null;
+  activeIndex: number;
 }
 
-export default function SearchResults({
+function SearchResults({
   results,
   isLoading,
   error,
+  activeIndex,
 }: SearchResultsProps) {
   if (isLoading) {
     return <div className={styles.loading}>Loading...</div>;
@@ -29,12 +32,23 @@ export default function SearchResults({
   }
 
   return (
-    <ul className={styles.list}>
-      {results.map((result) => (
-        <li key={result.id} className={styles.listItem}>
-          <span>{result.name}</span>
-        </li>
-      ))}
+    <ul className={styles.list} role="listbox">
+      {results.map((result, index) => {
+        const isActive = index === activeIndex;
+        return (
+          <li
+            key={result.id}
+            className={`${styles.listItem} ${isActive ? styles.active : ""}`}
+            role="option"
+            aria-selected={isActive}
+            id={`search-result-${index}`}
+          >
+            {result.name}
+          </li>
+        );
+      })}
     </ul>
   );
 }
+
+export default React.memo(SearchResults);

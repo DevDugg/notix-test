@@ -20,6 +20,10 @@
   background-color: #f7f7f7;
 }
 
+.active {
+  background-color: #eeeeee;
+}
+
 .listItem:last-child {
   border-bottom: none;
 }
