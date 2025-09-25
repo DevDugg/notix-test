@@ -7,12 +7,14 @@ interface SearchInputProps {
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
+  activeDescendant?: string;
 }
 
 const SearchInput: React.FC<SearchInputProps> = ({
   value,
   onChange,
   placeholder = "Search...",
+  activeDescendant,
 }) => {
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     onChange(event.target.value);
@@ -40,6 +42,10 @@ const SearchInput: React.FC<SearchInputProps> = ({
         placeholder={placeholder}
         className={styles.input}
         autoFocus
+        role="combobox"
+        aria-expanded={value.length > 0}
+        aria-controls="search-results-list"
+        aria-activedescendant={activeDescendant}
       />
     </div>
   );
