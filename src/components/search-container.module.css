@@ -1,0 +1,14 @@
+.resultsWrapper {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.resultsWrapper.resultsVisible {
+  grid-template-rows: 1fr;
+}
+
+.resultsContent {
+  overflow: hidden;
+  min-height: 0;
+}

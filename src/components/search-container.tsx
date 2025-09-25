@@ -8,6 +8,7 @@ import { useKeyboardNavigation } from "@/hooks/use-keyboard-navigation";
 import { useTypeToFocus } from "@/hooks/use-type-to-focus";
 import SearchInput from "@/components/search-input";
 import SearchResults from "@/components/search-results";
+import styles from "./search-container.module.css";
 
 export default function SearchContainer({
   initialQuery,
@@ -65,6 +66,8 @@ export default function SearchContainer({
   const activeDescendant =
     activeIndex !== -1 ? `search-result-${activeIndex}` : undefined;
 
+  const showResults = !!(results.length || error || isLoading);
+
   return (
     <div onKeyDown={handleKeyDown}>
       <SearchInput
@@ -73,13 +76,21 @@ export default function SearchContainer({
         onChange={handleInputChange}
         activeDescendant={activeDescendant}
       />
-      <SearchResults
-        results={results}
-        isLoading={isLoading}
-        error={error}
-        activeIndex={activeIndex}
-        query={debouncedQuery}
-      />
+      <div
+        className={`${styles.resultsWrapper} ${
+          showResults ? styles.resultsVisible : ""
+        }`}
+      >
+        <div className={styles.resultsContent}>
+          <SearchResults
+            results={results}
+            isLoading={isLoading}
+            error={error}
+            activeIndex={activeIndex}
+            query={debouncedQuery}
+          />
+        </div>
+      </div>
     </div>
   );
 }

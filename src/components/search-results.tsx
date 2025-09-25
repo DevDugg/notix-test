@@ -50,7 +50,15 @@ export default function SearchResults({
   }
 
   if (error) {
-    return <div className={styles.error}>{error}</div>;
+    return <div className={styles.centered}>{error}</div>;
+  }
+
+  if (results.length === 0 && query) {
+    return (
+      <div className={`${styles.centered} ${styles.noResults}`}>
+        No results found for "{query}"
+      </div>
+    );
   }
 
   if (results.length === 0) {
