@@ -42,7 +42,11 @@ export default function SearchResults({
   query,
 }: SearchResultsProps) {
   if (isLoading) {
-    return <div className={styles.loading}>Loading...</div>;
+    return (
+      <div className={styles.centered}>
+        <div className={styles.spinner} />
+      </div>
+    );
   }
 
   if (error) {
@@ -50,11 +54,11 @@ export default function SearchResults({
   }
 
   if (results.length === 0) {
-    return <div className={styles.noResults}>No results found.</div>;
+    return null;
   }
 
   return (
-    <ul className={styles.list} role="listbox">
+    <ul className={styles.list} role="listbox" id="search-results-list">
       {results.map((result, index) => {
         const isActive = index === activeIndex;
         return (
@@ -64,6 +68,7 @@ export default function SearchResults({
             role="option"
             aria-selected={isActive}
             id={`search-result-${index}`}
+            style={{ animationDelay: `${index * 50}ms` }}
           >
             <HighlightedText text={result.name} query={query} />
           </li>
