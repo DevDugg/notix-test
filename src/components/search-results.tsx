@@ -32,7 +32,7 @@ export default function SearchResults({
     <ul className={styles.list}>
       {results.map((result) => (
         <li key={result.id} className={styles.listItem}>
-          {result.name}
+          <span>{result.name}</span>
         </li>
       ))}
     </ul>

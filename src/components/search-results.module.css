@@ -13,6 +13,11 @@
   border-bottom: 1px solid #eee;
   background-color: #fff;
   text-align: left;
+  transition: background-color 0.2s ease-in-out, transform 0.2s ease-in-out;
+}
+
+.listItem:hover {
+  background-color: #f7f7f7;
 }
 
 .listItem:last-child {
@@ -31,4 +36,3 @@
   color: #d93025;
   font-weight: 500;
 }
-
