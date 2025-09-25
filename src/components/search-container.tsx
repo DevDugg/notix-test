@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef, RefObject } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useDebouncedCallback } from "@/hooks/use-debounced-callback";
 import { useSearch } from "@/hooks/use-search";
 import { useKeyboardNavigation } from "@/hooks/use-keyboard-navigation";
+import { useTypeToFocus } from "@/hooks/use-type-to-focus";
 import SearchInput from "@/components/search-input";
 import SearchResults from "@/components/search-results";
 
@@ -17,6 +18,7 @@ export default function SearchContainer({
   const { replace } = useRouter();
   const [inputValue, setInputValue] = useState(initialQuery);
   const [debouncedQuery, setDebouncedQuery] = useState(initialQuery);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const { results, isLoading, error } = useSearch(debouncedQuery);
 
@@ -53,6 +55,8 @@ export default function SearchContainer({
     [updateUrlAndQuery, setActiveIndex]
   );
 
+  useTypeToFocus(inputRef as RefObject<HTMLElement>, handleInputChange);
+
   useEffect(() => {
     setInputValue(initialQuery);
     setDebouncedQuery(initialQuery);
@@ -64,6 +68,7 @@ export default function SearchContainer({
   return (
     <div onKeyDown={handleKeyDown}>
       <SearchInput
+        ref={inputRef}
         value={inputValue}
         onChange={handleInputChange}
         activeDescendant={activeDescendant}
