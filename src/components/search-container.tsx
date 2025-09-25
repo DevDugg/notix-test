@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useDebouncedCallback } from "@/hooks/use-debounced-callback";
 import { useSearch } from "@/hooks/use-search";
+import { useKeyboardNavigation } from "@/hooks/use-keyboard-navigation";
 import SearchInput from "@/components/search-input";
 import SearchResults from "@/components/search-results";
 
@@ -30,12 +31,26 @@ export default function SearchContainer({
     replace(`${pathname}?${params.toString()}`);
   }, 500);
 
+  const handleEscape = useCallback(() => {
+    setInputValue("");
+    updateUrlAndQuery("");
+  }, [updateUrlAndQuery]);
+
+  const { activeIndex, setActiveIndex, handleKeyDown } = useKeyboardNavigation({
+    itemCount: results.length,
+    onEnter: (index) => {
+      console.log("Selected:", results[index]);
+    },
+    onEscape: handleEscape,
+  });
+
   const handleInputChange = useCallback(
     (value: string) => {
       setInputValue(value);
       updateUrlAndQuery(value);
+      setActiveIndex(-1);
     },
-    [updateUrlAndQuery]
+    [updateUrlAndQuery, setActiveIndex]
   );
 
   useEffect(() => {
@@ -43,10 +58,22 @@ export default function SearchContainer({
     setDebouncedQuery(initialQuery);
   }, [initialQuery]);
 
+  const activeDescendant =
+    activeIndex !== -1 ? `search-result-${activeIndex}` : undefined;
+
   return (
-    <>
-      <SearchInput value={inputValue} onChange={handleInputChange} />
-      <SearchResults results={results} isLoading={isLoading} error={error} />
-    </>
+    <div onKeyDown={handleKeyDown}>
+      <SearchInput
+        value={inputValue}
+        onChange={handleInputChange}
+        activeDescendant={activeDescendant}
+      />
+      <SearchResults
+        results={results}
+        isLoading={isLoading}
+        error={error}
+        activeIndex={activeIndex}
+      />
+    </div>
   );
 }
