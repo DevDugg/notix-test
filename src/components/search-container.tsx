@@ -78,6 +78,7 @@ export default function SearchContainer({
         isLoading={isLoading}
         error={error}
         activeIndex={activeIndex}
+        query={debouncedQuery}
       />
     </div>
   );
