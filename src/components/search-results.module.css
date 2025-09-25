@@ -25,6 +25,15 @@
 
 .listItem:hover {
   background-color: #f7f7f7;
+
+  &.active {
+    color: black;
+  }
+
+  .highlighted {
+    color: #007bff;
+    transition: none;
+  }
 }
 
 .active {
