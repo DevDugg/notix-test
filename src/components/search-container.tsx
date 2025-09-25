@@ -20,8 +20,41 @@ export default function SearchContainer({
   const [inputValue, setInputValue] = useState(initialQuery);
   const [debouncedQuery, setDebouncedQuery] = useState(initialQuery);
   const inputRef = useRef<HTMLInputElement>(null);
+  const resultsWrapperRef = useRef<HTMLDivElement>(null);
 
-  const { results, isLoading, error } = useSearch(debouncedQuery);
+  const {
+    results: searchResults,
+    isLoading,
+    error,
+  } = useSearch(debouncedQuery);
+  const [displayedResults, setDisplayedResults] = useState(searchResults);
+  const [showContainer, setShowContainer] = useState(false);
+
+  useEffect(() => {
+    const hasContent = !!(
+      searchResults.length ||
+      (debouncedQuery && isLoading) ||
+      error
+    );
+    setShowContainer(hasContent);
+
+    const node = resultsWrapperRef.current;
+    if (!node) return;
+
+    if (hasContent) {
+      setDisplayedResults(searchResults);
+    } else {
+      const handleTransitionEnd = () => {
+        setDisplayedResults([]);
+      };
+      node.addEventListener("transitionend", handleTransitionEnd, {
+        once: true,
+      });
+      return () => {
+        node.removeEventListener("transitionend", handleTransitionEnd);
+      };
+    }
+  }, [searchResults, debouncedQuery, isLoading, error]);
 
   const updateUrlAndQuery = useDebouncedCallback((query: string) => {
     setDebouncedQuery(query);
@@ -40,9 +73,9 @@ export default function SearchContainer({
   }, [updateUrlAndQuery]);
 
   const { activeIndex, setActiveIndex, handleKeyDown } = useKeyboardNavigation({
-    itemCount: results.length,
+    itemCount: displayedResults.length,
     onEnter: (index) => {
-      console.log("Selected:", results[index]);
+      console.log("Selected:", displayedResults[index]);
     },
     onEscape: handleEscape,
   });
@@ -66,8 +99,6 @@ export default function SearchContainer({
   const activeDescendant =
     activeIndex !== -1 ? `search-result-${activeIndex}` : undefined;
 
-  const showResults = !!(results.length || error || isLoading);
-
   return (
     <div onKeyDown={handleKeyDown}>
       <SearchInput
@@ -77,14 +108,15 @@ export default function SearchContainer({
         activeDescendant={activeDescendant}
       />
       <div
+        ref={resultsWrapperRef}
         className={`${styles.resultsWrapper} ${
-          showResults ? styles.resultsVisible : ""
+          showContainer ? styles.resultsVisible : ""
         }`}
       >
         <div className={styles.resultsContent}>
           <SearchResults
-            results={results}
-            isLoading={isLoading}
+            results={displayedResults}
+            isLoading={isLoading && !searchResults.length}
             error={error}
             activeIndex={activeIndex}
             query={debouncedQuery}
