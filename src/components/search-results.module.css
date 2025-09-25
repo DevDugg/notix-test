@@ -40,3 +40,7 @@
   color: #d93025;
   font-weight: 500;
 }
+
+.highlighted {
+  background-color: orange;
+}

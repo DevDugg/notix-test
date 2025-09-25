@@ -11,13 +11,35 @@ interface SearchResultsProps {
   isLoading: boolean;
   error: string | null;
   activeIndex: number;
+  query: string;
 }
 
-function SearchResults({
+const HighlightedText = ({ text, query }: { text: string; query: string }) => {
+  if (!query) {
+    return <>{text}</>;
+  }
+  const parts = text.split(new RegExp(`(${query})`, "gi"));
+  return (
+    <>
+      {parts.map((part, index) =>
+        part.toLowerCase() === query.toLowerCase() ? (
+          <span key={index} className={styles.highlighted}>
+            {part}
+          </span>
+        ) : (
+          <span key={index}>{part}</span>
+        )
+      )}
+    </>
+  );
+};
+
+export default function SearchResults({
   results,
   isLoading,
   error,
   activeIndex,
+  query,
 }: SearchResultsProps) {
   if (isLoading) {
     return <div className={styles.loading}>Loading...</div>;
@@ -43,12 +65,10 @@ function SearchResults({
             aria-selected={isActive}
             id={`search-result-${index}`}
           >
-            {result.name}
+            <HighlightedText text={result.name} query={query} />
           </li>
         );
       })}
     </ul>
   );
 }
-
-export default React.memo(SearchResults);
