@@ -37,7 +37,8 @@
 }
 
 .centered,
-.error {
+.error,
+.noResults {
   margin-top: 2rem;
   font-size: 1rem;
   color: #666;
@@ -45,6 +46,11 @@
   justify-content: center;
   align-items: center;
   animation: fadeIn 0.3s ease-out forwards;
+  padding: 2rem;
+}
+
+.centered {
+  min-height: 140px;
 }
 
 .error {
