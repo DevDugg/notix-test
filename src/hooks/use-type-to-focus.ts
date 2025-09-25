@@ -2,8 +2,8 @@
 
 import { useEffect } from "react";
 
-export function useTypeToFocus(
-  ref: React.RefObject<HTMLElement>,
+export function useTypeToFocus<T extends HTMLElement>(
+  ref: React.RefObject<T | null>,
   onKeyPress: (key: string) => void
 ) {
   useEffect(() => {
