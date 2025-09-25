@@ -57,17 +57,13 @@ export function SearchProvider({
   const [showContainer, setShowContainer] = useState(false);
 
   useEffect(() => {
-    const hasContent = !!(
-      searchResults.length ||
-      (debouncedQuery && isLoading) ||
-      error
-    );
-    setShowContainer(hasContent);
+    const hasContentToDisplay = !!(isLoading || error || debouncedQuery);
+    setShowContainer(hasContentToDisplay);
 
     const node = resultsWrapperRef.current;
     if (!node) return;
 
-    if (hasContent) {
+    if (hasContentToDisplay) {
       setDisplayedResults(searchResults);
     } else {
       const handleTransitionEnd = () => setDisplayedResults([]);
@@ -124,7 +120,7 @@ export function SearchProvider({
     inputValue,
     handleInputChange,
     results: displayedResults,
-    isLoading: isLoading && !searchResults.length,
+    isLoading: isLoading && !!debouncedQuery,
     error,
     activeIndex,
     handleKeyDown,
